@@ -1,26 +1,33 @@
 import { api } from './api';
-import { LoginCredentials, User } from '@/types';
+import { LoginCredentials, LoginResponse, User } from '../types/types';
 
 export const authService = {
-  async login(credentials: LoginCredentials): Promise<{ token: string; user: User }> {
-    const response = await api.post('/auth/login', credentials);
+  async login(data: LoginCredentials): Promise<LoginResponse> {
+    const response = await api.post('auth/login', data);
+    const token = response.data.token;
+    localStorage.setItem('token', token);
     return response.data;
   },
 
-  async getCurrentUser(): Promise<User> {
-    const response = await api.get('/auth/me');
-    return response.data;
-  },
-
-  async logout(): Promise<void> {
-    localStorage.removeItem('token');
+async register(data: {
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
+    password: string;
+  }): Promise<void> {
+    await api.post('register', data); 
   },
 
   getToken(): string | null {
     return localStorage.getItem('token');
   },
 
-  setToken(token: string): void {
-    localStorage.setItem('token', token);
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
+  },
+
+  logout(): void {
+    localStorage.removeItem('token');
   },
 };

@@ -1,67 +1,45 @@
-import { useEffect } from 'react';
-import { Toaster } from '@/components/ui/toaster';
-import { Toaster as Sonner } from '@/components/ui/sonner';
-import { TooltipProvider } from '@/components/ui/tooltip';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
+import NewSpotForm from './pages/NewSpotForm'; 
+import VerifyLink from './pages/VerifyLink';
+import SpotDetail from './pages/SpotDetail';
 
-// Pages
-import { Login } from '@/pages/Login';
-import { Dashboard } from '@/pages/Dashboard';
-import { CreateSpot } from '@/pages/CreateSpot';
-import { Reports } from '@/pages/Reports';
-import NotFound from './pages/NotFound';
-
-const queryClient = new QueryClient();
-
-const App = () => {
-  const { loadUser } = useAuthStore();
-
-  useEffect(() => {
-    loadUser();
-  }, [loadUser]);
-
+export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<Navigate to="/spots" replace />} />
-            <Route
-              path="/spots"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/spots/create"
-              element={
-                <ProtectedRoute>
-                  <CreateSpot />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/reports"
-              element={
-                <ProtectedRoute requiredRole="ADMIN">
-                  <Reports />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-};
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-export default App;
+      {/* Rota protegida */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/new-spot"
+        element={
+          <PrivateRoute>
+            <>
+              <NewSpotForm />
+            </>
+          </PrivateRoute>
+        }
+      />
+      <Route path="/verify" element={<VerifyLink />} />
+      <Route path="/spots/:id" element={<SpotDetail />} />
+
+      {/* Redireciona qualquer outra rota para /login */}
+      <Route path="*" element={<Navigate to="/login" />} />
+    </Routes>
+  );
+}
+
+
+

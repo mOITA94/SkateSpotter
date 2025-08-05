@@ -1,7 +1,8 @@
-package com.skatespotter.controller;
+/*package com.skatespotter.controller;
 
 import com.skatespotter.dto.AuthRequest;
 import com.skatespotter.dto.AuthResponse;
+import com.skatespotter.dto.RegisterDTO;
 import com.skatespotter.model.User;
 import com.skatespotter.repository.UserRepository;
 import com.skatespotter.security.jwt.JwtUtil;
@@ -43,17 +44,24 @@ public class JwtAuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+    public ResponseEntity<?> register(@RequestBody RegisterDTO dto) {
+        if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already taken");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        User user = new User();
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setUsername(dto.getUsername());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole("USER");
-        user.setEnabled(true); // Altere para false se quiser exigir verificação por email
+        user.setEnabled(false);
+
         userRepository.save(user);
 
         return ResponseEntity.ok("User registered successfully");
     }
 }
 
+*/

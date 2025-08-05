@@ -1,57 +1,75 @@
 import { api } from './api';
-import { Spot, CreateSpotData, SpotFilters } from '@/types';
+import { SkateSpot } from '../types/types';
+import { authService } from './authService';
 
+interface FilterParams {
+  difficulty?: string;
+  surface?: string;
+  location?: string;
+}
+
+const API = api;
+
+// Interceptor to add the token to the request headers
+// This assumes the token is stored in localStorage after login
+API.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;   
+  }
+  return config;
+});
+
+// Service to fetch skate spots with optional filters
+// If no filters are provided, it returns all spots sorted by name
 export const spotService = {
-  async getSpots(filters?: SpotFilters): Promise<Spot[]> {
-    const params = new URLSearchParams();
-    if (filters?.difficulty) params.append('difficulty', filters.difficulty);
-    if (filters?.surface) params.append('surface', filters.surface);
-    if (filters?.location) params.append('location', filters.location);
-    
-    const response = await api.get(`/spots?${params.toString()}`);
+  async getAll(params?: FilterParams): Promise<SkateSpot[]> {
+    const response = await API.get<SkateSpot[]>('/spots', { params });
+    if (!params || (!params.difficulty && !params.surface && !params.location)) {
+      return response.data.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
     return response.data;
   },
 
-  async getSpotById(id: number): Promise<Spot> {
-    const response = await api.get(`/spots/${id}`);
-    return response.data;
-  },
-
-  async createSpot(data: CreateSpotData): Promise<Spot> {
+  // Service to create a new skate spot
+  // It accepts a data object with the necessary fields and an image file
+  async createSpot(data: {
+    username: string;
+    name: string;
+    description: string;
+    location: string;
+    surface: string;
+    difficulty: string;
+    image: File;
+  }): Promise<void> {
+    const token = authService.getToken(); 
+  if (!token) throw new Error('Usuário não autenticado');
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('description', data.description);
     formData.append('location', data.location);
-    if (data.locationUrl) formData.append('locationUrl', data.locationUrl);
     formData.append('surface', data.surface);
     formData.append('difficulty', data.difficulty);
     formData.append('image', data.image);
+    console.log('Token no createSpot:', localStorage.getItem('token'));
 
-    const response = await api.post('/spots', formData, {
+    await API.post('/spots', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     });
+  },
+
+  // Service to fetch a skate spot by its ID
+  async getSpotById(id: number): Promise<SkateSpot> {
+    const response = await API.get<SkateSpot>(`/spots/${id}`);
     return response.data;
   },
 
-  async updateSpot(id: number, data: Partial<CreateSpotData>): Promise<Spot> {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined) {
-        formData.append(key, value as string | File);
-      }
-    });
-
-    const response = await api.put(`/spots/${id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  },
-
-  async deleteSpot(id: number): Promise<void> {
-    await api.delete(`/spots/${id}`);
-  },
+  // Service to fetch the average rating for a spot
+  async getAverageRating(spotId: number): Promise<number> {
+    const res = await api.get(`/ratings/${spotId}/average`);
+    return res.data;
+  }
 };

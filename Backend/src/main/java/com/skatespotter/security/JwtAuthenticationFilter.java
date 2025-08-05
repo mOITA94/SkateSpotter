@@ -21,7 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtUtil jwtUtil;
 	private final CustomUserDetailsService userDetailsService;
 
-	private static final List<String> PUBLIC_GET_ENDPOINTS = List.of("/api/spots");
+	private static final List<String> PUBLIC_GET_ENDPOINTS = List.of("/api/spots","/api/verify", "/api/filter");
 
 	private static final List<String> PUBLIC_POST_ENDPOINTS = List.of("/api/register", "/api/auth/login",
 			"/api/verify");
@@ -70,7 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				return;
 			}
 		}
-		
 		filterChain.doFilter(request, response);
 	}
 }

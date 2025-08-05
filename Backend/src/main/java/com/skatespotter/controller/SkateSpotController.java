@@ -8,6 +8,7 @@ import com.skatespotter.dto.SkateSpotDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,8 +28,20 @@ public class SkateSpotController {
 	}
 
 	@GetMapping
-	public List<SkateSpotDTO> getAllSpots() {
-		return skateSpotService.findAll().stream().map(SkateSpotDTO::new).toList();
+	public ResponseEntity<List<SkateSpotDTO>> getAllSpots(@RequestParam(required = false) String difficulty,
+			@RequestParam(required = false) String surface, @RequestParam(required = false) String location) {
+
+		List<SkateSpotDTO> filtered = skateSpotService.findAll().stream()
+
+				.filter(s -> difficulty == null
+						|| (s.getDifficulty() != null && s.getDifficulty().equalsIgnoreCase(difficulty)))
+				.filter(s -> surface == null || (s.getSurface() != null && s.getSurface().equalsIgnoreCase(surface)))
+				.filter(s -> location == null
+						|| (s.getLocation() != null && s.getLocation().toLowerCase().contains(location.toLowerCase())))
+
+				.map(SkateSpotDTO::new).toList();
+
+		return ResponseEntity.ok(filtered);
 	}
 
 	@GetMapping("/{id}")
@@ -39,15 +52,16 @@ public class SkateSpotController {
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> createSpot(@RequestParam("image") MultipartFile image,
-			@RequestParam("username") String username, @RequestParam("name") String name,
+			@RequestParam("name") String name,
 			@RequestParam("description") String description, @RequestParam("location") String location,
 			@RequestParam("surface") String surface, @RequestParam("difficulty") String difficulty) {
 		try {
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			String imageUrl = imageUploadService.uploadImage(image);
 
 			SkateSpot spot = new SkateSpot();
 			spot.setName(name);
-			spot.setDescription(description);
+			spot.setDescription(description);	
 			spot.setLocation(location);
 			spot.setSurface(surface);
 			spot.setDifficulty(difficulty);
@@ -57,7 +71,8 @@ public class SkateSpotController {
 			SkateSpot created = skateSpotService.save(spot, username);
 			return ResponseEntity.ok(new SkateSpotDTO(created));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image or saving spot");
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image or saving spot"+e.getMessage());
 		}
 	}
 
@@ -119,23 +134,5 @@ public class SkateSpotController {
 
 		return ResponseEntity.ok(filtered);
 	}
-
-	/*
-	 * @PostMapping public ResponseEntity<SkateSpotDTO> createSpot(@RequestBody
-	 * SkateSpotRequest request) { SkateSpot spot = request.getSpot();
-	 * spot.setCreatedAt(LocalDateTime.now()); SkateSpot created =
-	 * skateSpotService.save(request.getSpot(), request.getUsername()); return
-	 * ResponseEntity.ok(new SkateSpotDTO(created)); }
-	 */
-	
-	/*
-	 * public static class SkateSpotRequest { private SkateSpot spot; private String
-	 * username;
-	 * 
-	 * public SkateSpot getSpot() { return spot; } public void setSpot(SkateSpot
-	 * spot) { this.spot = spot; } public String getUsername() { return username; }
-	 * public void setUsername(String username) { this.username = username; } }
-	 */
-	
 
 }

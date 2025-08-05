@@ -1,89 +1,132 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Layout } from '@/components/layout/Layout';
-import { SpotCard } from '@/components/spots/SpotCard';
-import { SpotFilters } from '@/components/spots/SpotFilters';
-import { spotService } from '@/services/spotService';
-import { Spot, SpotFilters as ISpotFilters } from '@/types';
-import { Plus, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import React, { useEffect, useState } from 'react';
+import { spotService } from '../services/spotService';
+import { SkateSpot } from '../types/types';
+import { useNavigate } from 'react-router-dom';
+import SkateRating from '../components/SkateRating';
 
-export const Dashboard = () => {
-  const [spots, setSpots] = useState<Spot[]>([]);
-  const [filters, setFilters] = useState<ISpotFilters>({});
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
+export default function Dashboard() {
+  const [spots, setSpots] = useState<SkateSpot[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadSpots();
-  }, [filters]);
+  const [difficulty, setDifficulty] = useState('');
+  const [surface, setSurface] = useState('');
+  const [location, setLocation] = useState('');
+  const navigate = useNavigate();
 
-  const loadSpots = async () => {
+  const fetchSpots = async () => {
+    setLoading(true);
     try {
-      setIsLoading(true);
-      const data = await spotService.getSpots(filters);
+
+      const mapDifficultyToPortuguese = (value: string) => {
+        switch (value) {
+          case 'Easy': return 'Fácil';
+          case 'Medium': return 'Médio';
+          case 'Hard': return 'Difícil';
+        default: return '';
+  }
+};
+      const data = await spotService.getAll({
+        difficulty: difficulty || undefined,
+        surface: surface || undefined,
+        location: location || undefined,
+      });
       setSpots(data);
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load spots. Please try again.',
-        variant: 'destructive',
-      });
+      console.error('Error fetching spots:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchSpots();
+  }, []);
+
+  const handleFilter = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchSpots();
+  };
+
   return (
-    <Layout>
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Skate Spots</h1>
-            <p className="text-muted-foreground">
-              Discover amazing places to skate around the world
-            </p>
-          </div>
-          <Button asChild className="shrink-0">
-            <Link to="/spots/create">
-              <Plus className="w-4 h-4 mr-2" />
-              Add New Spot
-            </Link>
-          </Button>
-        </div>
-
-        <SpotFilters filters={filters} onFiltersChange={setFilters} />
-
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          </div>
-        ) : spots.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="max-w-md mx-auto">
-              <div className="w-16 h-16 skate-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                <Plus className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">No spots found</h3>
-              <p className="text-muted-foreground mb-4">
-                {Object.values(filters).some(Boolean)
-                  ? 'Try adjusting your filters or be the first to add a spot in this area.'
-                  : 'Be the first to add a skate spot to the community!'}
-              </p>
-              <Button asChild>
-                <Link to="/spots/create">Add the first spot</Link>
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {spots.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} />
-            ))}
-          </div>
-        )}
+    <div className="p-6 bg-white dark:bg-slate-900 min-h-screen text-slate-900 dark:text-slate-100">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Registered Skate Spots</h1>
+        <button
+          className="bg-blue-600 text-white px-5 py-2 rounded-2xl shadow hover:bg-blue-700 transition"
+          onClick={() => navigate('/new-spot')}
+        >
+          Add New Spot
+        </button>
       </div>
-    </Layout>
+
+      <form onSubmit={handleFilter} className="mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <input
+          type="text"
+          placeholder="City"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="border border-slate-300 dark:border-slate-600 p-2 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <select
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+          className="border border-slate-300 dark:border-slate-600 p-2 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Difficulties</option>
+          <option value="Fácil">Easy</option>
+          <option value="Média">Medium</option>
+          <option value="Difícil">Hard</option>
+        </select>
+        <select
+          value={surface}
+          onChange={(e) => setSurface(e.target.value)}
+          className="border border-slate-300 dark:border-slate-600 p-2 rounded-lg bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">All Surfaces</option>
+          <option value="Asfalto">Asphalt</option>
+          <option value="Concreto">Concrete</option>
+          <option value="Madeira">Wood</option>
+        </select>
+        <button
+          type="submit"
+          className="bg-slate-800 dark:bg-slate-700 text-white rounded-2xl px-4 py-2 shadow hover:bg-slate-900 transition"
+        >
+          Filter
+        </button>
+      </form>
+
+      {loading ? (
+        <p className="text-slate-500 dark:text-slate-400">Loading...</p>
+      ) : spots.length === 0 ? (
+        <p className="text-slate-500 dark:text-slate-400">No spots found.</p>
+      ) : (
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {spots.map((spot) => (
+            <div
+              key={spot.id}
+              onClick={() => navigate(`/spots/${spot.id}`)}
+              className="border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm bg-slate-50 dark:bg-slate-800 cursor-pointer hover:shadow-md transition"
+            >
+              <img
+                src={spot.imageUrl}
+                alt={spot.name}
+                className="w-full h-48 object-cover mb-3 rounded-lg"
+              />
+              <h2 className="text-xl font-semibold">{spot.name}</h2>
+              <p className="text-slate-500 dark:text-slate-400">Difficulty: {spot.difficulty}</p>
+              <p className="text-slate-500 dark:text-slate-400">Surface: {spot.surface}</p>
+
+              {spot.rating > 0 && (
+                <div className="mt-2">
+                  <SkateRating rating={Math.round(spot.rating)} />
+                </div>
+              )}
+
+              <p className="text-blue-600 underline mt-2">View on Map</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
-};
+}

@@ -1,18 +1,34 @@
 import { api } from './api';
-import { Report } from '@/types';
+
+export interface ReportDTO {
+  id?: number;
+  spotId: number;
+  reason: string;
+  reporterUsername?: string;
+  createdAt?: string;
+}
+
+const API = api;
+
+API.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;   
+  }
+  return config;
+});
 
 export const reportService = {
-  async getReports(): Promise<Report[]> {
+  async createReport(data: ReportDTO): Promise<void> {
+    await API.post('/reports', data);
+  },
+
+  async getAllReports(): Promise<ReportDTO[]> {
     const response = await api.get('/reports');
     return response.data;
   },
 
   async deleteReport(id: number): Promise<void> {
     await api.delete(`/reports/${id}`);
-  },
-
-  async createReport(spotId: number, reason: string): Promise<Report> {
-    const response = await api.post('/reports', { spotId, reason });
-    return response.data;
-  },
+  }
 };

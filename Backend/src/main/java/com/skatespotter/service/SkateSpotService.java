@@ -88,7 +88,6 @@ public class SkateSpotService {
 
 		SkateSpot spot = skateSpotRepository.findById(spotId).orElseThrow(() -> new RuntimeException("Spot not found"));
 
-		// Atualiza a média ponderada
 		double totalRating = spot.getRating() * spot.getRatingCount();
 		totalRating += rating;
 		spot.setRatingCount(spot.getRatingCount() + 1);

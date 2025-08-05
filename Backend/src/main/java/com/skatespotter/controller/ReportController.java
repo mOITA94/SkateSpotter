@@ -5,6 +5,7 @@ import com.skatespotter.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class ReportController {
     // Usuário logado reporta um spot
     @PostMapping
     public ResponseEntity<ReportDTO> create(@RequestBody Map<String, String> body) {
-        String username = body.get("username");
+    	String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Long spotId = Long.valueOf(body.get("spotId"));
         String reason = body.get("reason");
 

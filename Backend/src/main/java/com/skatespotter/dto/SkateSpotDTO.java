@@ -16,7 +16,8 @@ public class SkateSpotDTO {
     private double rating;
     private int ratingCount;
     private LocalDateTime createdAt;
-    private String createdByUsername; // Somente o username do criador
+    private String createdByUsername;
+    private String imageUrl;
 
     public SkateSpotDTO(SkateSpot spot) {
         this.id = spot.getId();
@@ -29,6 +30,7 @@ public class SkateSpotDTO {
         this.rating = spot.getRating();
         this.ratingCount = spot.getRatingCount();
         this.createdAt = spot.getCreatedAt();
+        this.imageUrl = spot.getImageUrl();
 
         // Protege contra erro de lazy-loading com proxy nulo
         if (spot.getCreatedBy() != null) {
@@ -49,6 +51,7 @@ public class SkateSpotDTO {
     public int getRatingCount() { return ratingCount; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public String getCreatedByUsername() { return createdByUsername; }
+    public String getImageUrl() {return imageUrl;}
 
     public void setId(Long id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -61,5 +64,6 @@ public class SkateSpotDTO {
     public void setRatingCount(int ratingCount) { this.ratingCount = ratingCount; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public void setCreatedByUsername(String createdByUsername) { this.createdByUsername = createdByUsername; }
+    public void setImageUrl(String imageUrl) {this.imageUrl = imageUrl;} 
 }
 

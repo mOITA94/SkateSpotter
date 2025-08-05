@@ -13,13 +13,14 @@ public class EmailService {
 
 	public void sendVerificationEmail(String to, String code) {
 		System.out.println(">>> Enviando código de verificação: " + code);
+
+		String verificationLink = "http://localhost:8080/api/verify?email=" + to.replace("@", "%40") + "&code=" + code;
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(to);
-		message.setSubject("SkateSpotter - Email Verification Code");
-		message.setText(
-				"Hello!\n\nYour verification code is: " + code + "\n\nEnter this code to complete your registration.");
-		message.setFrom("skatespotterdub@gmail.com");
+		message.setSubject("SkateSpotter - Verify your email");
+		message.setText("Hello\n\n+Click <a href='"+ verificationLink +"'>this link</a> to activate your account");
 
+		message.setFrom("skatespotterdub@gmail.com");
 		mailSender.send(message);
 	}
 
