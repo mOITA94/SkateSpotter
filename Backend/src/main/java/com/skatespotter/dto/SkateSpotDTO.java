@@ -12,6 +12,8 @@ public class SkateSpotDTO {
     private String locationUrl;
     private String surface;
     private String difficulty;
+    private String spotType;
+    private Boolean hasSecurity;
     private String description;
     private double rating;
     private int ratingCount;
@@ -25,6 +27,8 @@ public class SkateSpotDTO {
         this.location = spot.getLocation();
         this.locationUrl = spot.getLocationUrl();
         this.surface = spot.getSurface();
+        this.spotType = spot.getSpotType();
+        this.hasSecurity = spot.getHasSecurity();
         this.difficulty = spot.getDifficulty();
         this.description = spot.getDescription();
         this.rating = spot.getRating();
@@ -45,6 +49,8 @@ public class SkateSpotDTO {
     public String getLocation() { return location; }
     public String getLocationUrl() { return locationUrl; }
     public String getSurface() { return surface; }
+    public String getSpotType() {return spotType;}
+    public Boolean getHasSecurity () {return hasSecurity;}
     public String getDifficulty() { return difficulty; }
     public String getDescription() { return description; }
     public double getRating() { return rating; }
@@ -58,6 +64,8 @@ public class SkateSpotDTO {
     public void setLocation(String location) { this.location = location; }
     public void setLocationUrl(String locationUrl) { this.locationUrl = locationUrl; }
     public void setSurface(String surface) { this.surface = surface; }
+    public void setSpotType(String spotType) {this.spotType = spotType;}
+    public void setHasSecurity (Boolean hasSecurity) {this.hasSecurity = hasSecurity;}
     public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
     public void setDescription(String description) { this.description = description; }
     public void setRating(double rating) { this.rating = rating; }

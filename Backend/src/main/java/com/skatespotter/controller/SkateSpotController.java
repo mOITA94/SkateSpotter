@@ -54,7 +54,7 @@ public class SkateSpotController {
 	public ResponseEntity<?> createSpot(@RequestParam("image") MultipartFile image,
 			@RequestParam("name") String name,
 			@RequestParam("description") String description, @RequestParam("location") String location,
-			@RequestParam("surface") String surface, @RequestParam("difficulty") String difficulty) {
+			@RequestParam("surface") String surface, @RequestParam("spotType") String spotType, @RequestParam("hasSecurity") Boolean hasSecurity, @RequestParam("difficulty") String difficulty) {
 		try {
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
 			String imageUrl = imageUploadService.uploadImage(image);
@@ -64,6 +64,8 @@ public class SkateSpotController {
 			spot.setDescription(description);	
 			spot.setLocation(location);
 			spot.setSurface(surface);
+			spot.setSpotType(spotType);
+			spot.setHasSecurity(hasSecurity);
 			spot.setDifficulty(difficulty);
 			spot.setImageUrl(imageUrl);
 			spot.setCreatedAt(LocalDateTime.now());
@@ -120,15 +122,14 @@ public class SkateSpotController {
 
 	@GetMapping("/filter")
 	public ResponseEntity<List<SkateSpotDTO>> filterSpots(@RequestParam(required = false) String difficulty,
-			@RequestParam(required = false) String surface, @RequestParam(required = false) String location) {
+			@RequestParam(required = false) String surface, @RequestParam(required = false) String location, @RequestParam(required=false) String spotType) {
 
 		List<SkateSpotDTO> filtered = skateSpotService.findAll().stream()
 
-				.filter(s -> difficulty == null
-						|| (s.getDifficulty() != null && s.getDifficulty().equalsIgnoreCase(difficulty)))
+				.filter(s -> difficulty == null || (s.getDifficulty() != null && s.getDifficulty().equalsIgnoreCase(difficulty)))
 				.filter(s -> surface == null || (s.getSurface() != null && s.getSurface().equalsIgnoreCase(surface)))
-				.filter(s -> location == null
-						|| (s.getLocation() != null && s.getLocation().toLowerCase().contains(location.toLowerCase())))
+				.filter(s -> location == null || (s.getLocation() != null && s.getLocation().toLowerCase().contains(location.toLowerCase())))
+				.filter(s -> spotType == null || (s.getSpotType() != null && s.getSpotType().toLowerCase().contains(spotType.toLowerCase())))
 
 				.map(SkateSpotDTO::new).toList();
 

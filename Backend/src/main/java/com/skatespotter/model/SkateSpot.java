@@ -26,6 +26,12 @@ public class SkateSpot {
 
 	@NotBlank(message = "Surface is required")
 	private String surface;
+	
+	@NotBlank(message = "Spot type")
+	private String spotType;
+	
+	@NotBlank(message = "Has security?")
+	private Boolean hasSecurity;
 
 	@NotBlank(message = "Difficulty is required")
 	private String difficulty;
@@ -52,11 +58,13 @@ public class SkateSpot {
 	public SkateSpot() {
 	}
 
-	public SkateSpot(String name, String location, String locationUrl, String surface, String difficulty, String description,
+	public SkateSpot(String name, String location, String locationUrl, String surface, String difficulty, String spotType, Boolean hasSecurity, String description,
 			User createdBy) {
 		this.name = name;
 		this.location = location;
 		this.surface = surface;
+		this.spotType = spotType;
+		this.hasSecurity = hasSecurity;
 		this.difficulty = difficulty;
 		this.description = description;
 		this.locationUrl = locationUrl;
@@ -108,6 +116,22 @@ public class SkateSpot {
 		this.surface = surface;
 	}
 
+	public String getSpotType() {
+		return this.spotType;
+	}
+	
+	public void setSpotType(String spotType) {
+		this.spotType = spotType;
+	}
+	
+	public Boolean getHasSecurity() {
+		return this.hasSecurity;
+	}
+
+	public void setHasSecurity(Boolean hasSecurity) {
+		this.hasSecurity = hasSecurity;
+	}
+	
 	public String getDifficulty() {
 		return difficulty;
 	}
