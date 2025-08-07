@@ -1,97 +1,68 @@
----
+#  SkateSpotter
 
-### ✅ `README.md` para o SkateSpotter
+SkateSpotter is a full-stack project that helps skateboarding enthusiasts find, rate, and report skate spots.
 
-````markdown
-# 🛹 SkateSpotter
+##  Features
+- Mark skate spots on a map with ratings and photos
+- Submit and report new spots by users
+- Filter by surface type, difficulty, or location
+- Authentication and user roles: users and admins
 
-SkateSpotter is a full-stack web application that allows users to find, rate, and report skate spots across different cities. Built with **Spring Boot** (Java) in the backend and **React + Vite + Tailwind CSS** in the frontend.
+##  Tech Stack
+- **Backend**: Java (Spring Boot)
+- **Frontend**: TypeScript (likely React or similar)
+- **Database**: MySQL (or similar relational DB)
+- **Storage**: Cloudinary or S3 for image uploads
+- **Authentication**: JWT-based
 
----
+##  Getting Started
 
-## 🚀 Features
+### Prerequisites
+- Java 17+
+- Maven
+- Node.js & npm or Yarn
+- MySQL or compatible DB
 
-- 🔐 User authentication (register, login, email verification)
-- 📍 Create and browse skate spots
-- 🖼️ Upload and crop spot images
-- ⭐ Rate and review spots
-- 🚨 Report inappropriate or unsafe locations
-- 🧠 Filter by difficulty, surface, location, type, and security
-- 🎨 Dark mode UI with responsive design
+### Setup Backend
+```bash
+cd Backend
+# Configure application.properties/env variables
+mvn clean install
+mvn spring-boot:run
+````
 
----
-
-## 🛠️ Technologies Used
-
-### Backend
-- Java 17
-- Spring Boot
-- Spring Security
-- MySQL
-- JWT authentication
-- Cloudinary API (for image uploads)
-
-### Frontend
-- React 18
-- TypeScript
-- Tailwind CSS
-- Vite
-- react-easy-crop
-- Axios
-
----
-
-## 📦 Installation
+### Setup Frontend
 
 ```bash
-# Clone the repository
-git clone https://github.com/mOITA94/SkateSpotter.git
-cd SkateSpotter
-
-# Install dependencies for frontend
 cd Frontend
 npm install
 npm run dev
+```
 
-# Configure backend
-cd ../Backend
-# Configure application.properties (DB, email, etc.)
-./mvnw spring-boot:run
-````
+### Running All Together
 
----
+* Backend at `http://localhost:8080`
+* Frontend at `http://localhost:3000` (adjust ports if needed)
+* API env vars and endpoints configured accordingly
 
-## ⚙️ Configuration
+## Project Structure
 
-* Update database credentials and mail config in:
-  `Backend/src/main/resources/application.properties`
+```
+SkateSpotter/
+├── Backend/       Java + Spring Boot backend
+└── Frontend/      TypeScript-based SPA (e.g. React)
+```
 
-* To use Cloudinary for image uploads, configure the Cloudinary credentials.
+## Contributing
 
----
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/...`)
+3. Commit your changes (`git commit -m "feat: ..."`)
+4. Push (`git push origin feature/...`)
+5. Open a Pull Request
 
-## ✅ Usage
+## License
 
-1. Register a new user
-2. Verify email through link or code
-3. Login
-4. Add new skate spots with cropped images
-5. Filter, view, and rate existing spots
-6. Admins can moderate reports
-
----
-
-## 👨‍💻 Developer
-
-* **Pedro Ferraz**
-  [GitHub](https://github.com/mOITA94)
-
----
-
-## 📝 License
-
-This project is for academic purposes and not licensed for commercial use.
+Project licensed under the MIT License. *(ou indique outra licença caso use)*
 
 ````
-
----
