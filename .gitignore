@@ -1,0 +1,28 @@
+# Node modules
+node_modules/
+Frontend/node_modules/
+**/node_modules/
+
+# Vite cache
+.vite/
+Frontend/.vite/
+
+# Build outputs
+dist/
+build/
+target/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log
+
+# Editor configs
+.vscode/
+.idea/
+*.iml
+
+# ZIPs e backups
+Frontend/zips/
+*.zip
