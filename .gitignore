@@ -26,3 +26,7 @@ target/
 # ZIPs e backups
 Frontend/zips/
 *.zip
+
+# Arquivos de configuracao sensiveis
+.env
+Backend/.env
