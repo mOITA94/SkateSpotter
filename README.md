@@ -5,7 +5,7 @@ SkateSpotter is a full-stack project that helps skateboarding enthusiasts find, 
 ##  Features
 - Mark skate spots on a map with ratings and photos
 - Submit and report new spots by users
-- Filter by surface type, difficulty, or location
+- Filter by spot type, surface type, difficulty, or location
 - Authentication and user roles: users and admins
 
 ##  Tech Stack
@@ -63,6 +63,6 @@ SkateSpotter/
 
 ## License
 
-Project licensed under the MIT License. *(ou indique outra licença caso use)*
+Project licensed under the MIT License.
 
 ````
